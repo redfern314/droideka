@@ -140,9 +140,10 @@ void setup(void)
   
   /* Read data until either the connection is closed, or the idle timeout is reached. */ 
   unsigned long lastRead = millis();
+  char c[] = {-1,-1,-1};
   while (www.connected() && (millis() - lastRead < IDLE_TIMEOUT_MS)) {
     while (www.available()) {
-      char c[] = [www.read(),www.read(),www.read()];
+      c = {www.read(),www.read(),www.read()]};
       //c[0] = 0-255 (speed)
       //c[1] = 0,left; 1,right; 2,center
       //c[2] = 0,forward; 1,backward
