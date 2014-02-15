@@ -24,6 +24,10 @@
 // other magic numbers
 #define MOTOR_SPEED         255 // 0 to 255
 
+ // WiFi Constants
+ #define WLAN_SSID       "MIT"  
+ #define WLAN_SECURITY   WLAN_SEC_UNSEC
+
 int motorDirections = FORWARD;
 
 /* returns change in encoder state (-1,0,1) */
