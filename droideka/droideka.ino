@@ -8,8 +8,7 @@
 
 // pin definitions
 #define wifiEnable          4
-#define directionalSwitch   A2
-#define accelCS             A3
+// #define accelCS             A3
 #define motorAm1            7
 #define motorAm2            8
 #define motorPWM            6
@@ -32,9 +31,6 @@
 // leg servo state constants
 #define UP                  0
 #define DOWN                1
-
-// other magic numbers
-#define MOTOR_SPEED         255 // 0 to 255
 
  // WiFi Constants
  #define WLAN_SSID       "MIT"  
@@ -60,12 +56,15 @@ void setMotorMode(int mode) {
     if (mode==FORWARD) {
         digitalWrite(motorAm1,HIGH);
         digitalWrite(motorAm2,LOW);
+        Serial.println("frwrd");
     } else if (mode==BACKWARD) {
         digitalWrite(motorAm1,LOW);
         digitalWrite(motorAm2,HIGH);
+        Serial.println("bkwrd");
     } else if (mode==STOP) {
         digitalWrite(motorAm1,LOW);
         digitalWrite(motorAm2,LOW);
+        Serial.println("stop");
     }
 }
 
@@ -92,21 +91,19 @@ void setup() {
   pinMode(motorAm2, OUTPUT);
   pinMode(motorPWM, OUTPUT);
   pinMode(wifiCS, OUTPUT);
-  pinMode(directionalSwitch, INPUT);
 
   digitalWrite(wifiEnable,HIGH);
 
   tiltServo.attach(tiltServoPin);
 
+  setMotorMode(FORWARD);
+  setMotorSpeed(255);
+  setTiltServoState(RIGHT);
+
   Serial.begin (115200);
   Serial.println("Start");
 }
 
-// run ad nauseum
 void loop() {
-    int switchState = digitalRead(directionalSwitch);
-    if (switchState != motorDirections) {
-        motorDirections = switchState;
-        setMotorMode(motorDirections);
-    }
+    
 }
