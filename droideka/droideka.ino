@@ -4,22 +4,34 @@
  * Forrest Bourke, Derek Redfern, Eric Schneider, Paul Titchener
  */
 
+#include "Servo.h"
+
 // pin definitions
 #define wifiEnable          4
-#define directionalSwitch   6
+#define directionalSwitch   A2
 #define accelCS             A3
 #define motorAm1            7
 #define motorAm2            8
-#define motorPWM            9
+#define motorPWM            6
+#define tiltServoPin        9
 #define wifiCS              10
 #define rotaryPin1          _BV(PC0) //A0
 #define rotaryPin2          _BV(PC1) //A1
 #define rotaryPort          PINC
 
-// directional constants
+// motor directional constants
 #define FORWARD             0
 #define BACKWARD            1
 #define STOP                2
+
+// tilt servo directional constants
+#define LEFT                0
+#define RIGHT               1
+#define CENTER              2
+
+// leg servo state constants
+#define UP                  0
+#define DOWN                1
 
 // other magic numbers
 #define MOTOR_SPEED         255 // 0 to 255
@@ -29,6 +41,8 @@
  #define WLAN_SECURITY   WLAN_SEC_UNSEC
 
 int motorDirections = FORWARD;
+
+Servo tiltServo;
 
 /* returns change in encoder state (-1,0,1) */
 int8_t read_encoder()
@@ -59,6 +73,16 @@ void setMotorSpeed(int speed) {
     analogWrite(motorPWM,speed);
 }
 
+void setTiltServoState(int tiltState) {
+    if (tiltState==LEFT) {
+        tiltServo.write(0);
+    } else if (tiltState==RIGHT) {
+        tiltServo.write(180);
+    } else if (tiltState==CENTER) {
+        tiltServo.write(90);
+    }
+}
+
 // run once
 void setup() {     
   pinMode(wifiEnable, OUTPUT);         
@@ -71,6 +95,8 @@ void setup() {
   pinMode(directionalSwitch, INPUT);
 
   digitalWrite(wifiEnable,HIGH);
+
+  tiltServo.attach(tiltServoPin);
 
   Serial.begin (115200);
   Serial.println("Start");
