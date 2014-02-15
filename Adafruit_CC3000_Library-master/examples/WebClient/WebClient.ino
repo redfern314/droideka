@@ -51,8 +51,8 @@ Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ
                                    // you're accessing is quick to respond, you can reduce this value.
 
 // What page to grab!
-#define WEBSITE      "www.adafruit.com"
-#define WEBPAGE      "/testwifi/index.html"
+#define WEBSITE      "droideka.herokuapp.com"
+#define WEBPAGE      "/droid"
 
 
 /**************************************************************************/
@@ -142,12 +142,23 @@ void setup(void)
   unsigned long lastRead = millis();
   while (www.connected() && (millis() - lastRead < IDLE_TIMEOUT_MS)) {
     while (www.available()) {
-      char c = www.read();
-      Serial.print(c);
+      char c[] = [www.read(),www.read(),www.read()];
+      //c[0] = 0-255 (speed)
+      //c[1] = 0,left; 1,right; 2,center
+      //c[2] = 0,forward; 1,backward
       lastRead = millis();
+        while (www.available()) {
+          www.read();
+      }
     }
   }
   www.close();
+  Serial.println(F("Speed Setting: "));
+  Serial.print(c[0]);
+  Serial.println(F("Turn Setting: "));
+  Serial.print(c[1]==0 ? F("Left") : c[1]==1 ? F("Right") : F("Center"));
+  Serial.println(F("Direction: "));
+    Serial.print(c[2]==0 ? F("Forward") : F("Backward"));
   Serial.println(F("-------------------------------------"));
   
   /* You need to make sure to clean up after yourself or the CC3000 can freak out */
