@@ -143,7 +143,9 @@ void setup(void)
   char c[] = {-1,-1,-1};
   while (www.connected() && (millis() - lastRead < IDLE_TIMEOUT_MS)) {
     while (www.available()) {
-      c = {www.read(),www.read(),www.read()]};
+      c[0] = www.read();
+      c[1] = www.read();
+      c[2] = www.read();
       //c[0] = 0-255 (speed)
       //c[1] = 0,left; 1,right; 2,center
       //c[2] = 0,forward; 1,backward
