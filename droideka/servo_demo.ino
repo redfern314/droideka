@@ -79,14 +79,14 @@ int right(int state){
 int center(int state){
   switch(state){
     case 0: //we're going from center to left
-      servo.writeMicroseconds(rightVal);
-      stopTime = millis() + 1000; //run to the right for one second
+      servo.writeMicroseconds(leftVal);
+      stopTime = millis() + 750; //run to the right for .75 second
       return 0; 
     case 1: //we're going from center to right
       servo.writeMicroseconds(rightVal);
-      stopTime = millis() + 500; //run to the right for half a second
+      stopTime = millis() + 750; //run to the right for .75 second
       return 1;
-    case 2: //we're going from the right to the center
+    case 2: //we're going from the center to the center
       return 2;
   }
 }
