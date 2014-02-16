@@ -66,7 +66,7 @@ uint32_t ip;
 
 char line[128];
 char c[3];
-byte control[3];
+byte controlData[3];
 boolean found;
 
 void setup(void)
@@ -105,7 +105,18 @@ void setup(void)
   while (! displayConnectionDetails()) {
     delay(1000);
   }
+  
+  getControlData(controlData);
+  Serial.println(controlData[0]);
+}
 
+void loop(void)
+{
+ delay(1000);
+}
+
+
+void getControlData(byte *control){
   ip = 0;
   // Try looking up the website's IP address
   Serial.print(WEBSITE); Serial.print(F(" -> "));
@@ -141,7 +152,7 @@ void setup(void)
     return;
   }
 
-  Serial.println(F("-------------------------------------"));
+  //Serial.println(F("-------------------------------------"));
   
   /* Read data until either the connection is closed, or the idle timeout is reached. */ 
   unsigned long lastRead = millis();
@@ -163,13 +174,13 @@ void setup(void)
     }
   }
   www.close();
-  Serial.print(F("Speed Setting: "));
-  Serial.println(control[0]);
-  Serial.print(F("Turn Setting: "));
-  Serial.println(control[1]==0 ? F("Left") : control[1]==1 ? F("Right") : F("Center"));
-  Serial.print(F("Direction: "));
-  Serial.println(control[2]==0 ? F("Forward") : F("Backward"));
-  Serial.println(F("-------------------------------------"));
+  //Serial.print(F("Speed Setting: "));
+  //Serial.println(control[0]);
+  //Serial.print(F("Turn Setting: "));
+  //Serial.println(control[1]==0 ? F("Left") : control[1]==1 ? F("Right") : F("Center"));
+  //Serial.print(F("Direction: "));
+  //Serial.println(control[2]==0 ? F("Forward") : F("Backward"));
+  //Serial.println(F("-------------------------------------"));
   
   /* You need to make sure to clean up after yourself or the CC3000 can freak out */
   /* the next time your try to connect ... */
@@ -178,10 +189,6 @@ void setup(void)
   
 }
 
-void loop(void)
-{
- delay(1000);
-}
 
 /**************************************************************************/
 /*!
