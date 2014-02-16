@@ -63,11 +63,13 @@ Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ
 /**************************************************************************/
 
 uint32_t ip;
+Adafruit_CC3000_Client www;
 
 char line[128];
 char c[3];
 byte controlData[3];
 boolean found;
+unsigned long start;
 
 void setup(void)
 {
@@ -75,7 +77,7 @@ void setup(void)
   Serial.println(F("Hello, CC3000!\n")); 
 
   Serial.print("Free RAM: "); Serial.println(getFreeRam(), DEC);
-  
+
   /* Initialise the module */
   Serial.println(F("\nInitializing..."));
   if (!cc3000.begin())
@@ -105,18 +107,7 @@ void setup(void)
   while (! displayConnectionDetails()) {
     delay(1000);
   }
-  
-  getControlData(controlData);
-  Serial.println(controlData[0]);
-}
 
-void loop(void)
-{
- delay(1000);
-}
-
-
-void getControlData(byte *control){
   ip = 0;
   // Try looking up the website's IP address
   Serial.print(WEBSITE); Serial.print(F(" -> "));
@@ -126,9 +117,8 @@ void getControlData(byte *control){
     }
     delay(500);
   }
-
   cc3000.printIPdotsRev(ip);
-  
+
   // Optional: Do a ping test on the website
   /*
   Serial.print(F("\n\rPinging ")); cc3000.printIPdotsRev(ip); Serial.print("...");  
@@ -136,25 +126,56 @@ void getControlData(byte *control){
   Serial.print(replies); Serial.println(F(" replies"));
   */  
 
+
   /* Try connecting to the website.
      Note: HTTP/1.1 protocol is used to keep the server from closing the connection before all data is read.
   */
-  Adafruit_CC3000_Client www = cc3000.connectTCP(ip, 80);
-  if (www.connected()) {
-    www.fastrprint(F("GET "));
-    www.fastrprint(WEBPAGE);
-    www.fastrprint(F(" HTTP/1.1\r\n"));
-    www.fastrprint(F("Host: ")); www.fastrprint(WEBSITE); www.fastrprint(F("\r\n"));
-    www.fastrprint(F("\r\n"));
-    www.println();
-  } else {
-    Serial.println(F("Connection failed"));    
-    return;
-  }
+  
+  start = millis();
+  
+  //getControlData(controlData);
+  //Serial.println(controlData[0]);
+}
 
-  //Serial.println(F("-------------------------------------"));
+void loop(void)
+{
+  getControlData(controlData);
+  Serial.println(controlData[0]);
+  delay(100);
+}
+
+
+//populates control (a length 3 array) with the control codes
+//c[0] = 0-255 (speed)
+//c[1] = 0,left; 1,right; 2,center
+//c[2] = 0,forward; 1,backward
+void getControlData(byte *control){
+
+  Serial.println(F("Begin"));  
+  Serial.print("Free RAM: "); Serial.println(getFreeRam(), DEC);
+  Serial.print("Time Since Reset: "); Serial.println(millis()-start);
+  www = cc3000.connectTCP(ip, 80);
+  
+  while (!www.connected()) {
+    Serial.println(F("Connection failed"));
+    www.close();
+    delay(100);
+    www = cc3000.connectTCP(ip, 80);  
+  }
+  www.fastrprint(F("GET "));
+  www.fastrprint(WEBPAGE);
+  www.fastrprint(F(" HTTP/1.1\r\n"));
+  www.fastrprint(F("Host: ")); www.fastrprint(WEBSITE); www.fastrprint(F("\r\n"));
+  www.fastrprint(F("\r\n"));
+  www.println();
+  Serial.println(F("Connected"));
+  //} else {
+  //  return;
+  //}
+  
   
   /* Read data until either the connection is closed, or the idle timeout is reached. */ 
+  found = 0;
   unsigned long lastRead = millis();
   while (www.connected() && (millis() - lastRead < IDLE_TIMEOUT_MS) && !found) {
     while (www.available() && !found) {
@@ -168,27 +189,27 @@ void getControlData(byte *control){
         found = true;
       }
       lastRead = millis();
-      //c[0] = 0-255 (speed)
-      //c[1] = 0,left; 1,right; 2,center
-      //c[2] = 0,forward; 1,backward
     }
   }
+      
   www.close();
-  //Serial.print(F("Speed Setting: "));
-  //Serial.println(control[0]);
-  //Serial.print(F("Turn Setting: "));
-  //Serial.println(control[1]==0 ? F("Left") : control[1]==1 ? F("Right") : F("Center"));
-  //Serial.print(F("Direction: "));
-  //Serial.println(control[2]==0 ? F("Forward") : F("Backward"));
   //Serial.println(F("-------------------------------------"));
   
   /* You need to make sure to clean up after yourself or the CC3000 can freak out */
   /* the next time your try to connect ... */
-  Serial.println(F("\n\nDisconnecting"));
-  cc3000.disconnect();
+  //Serial.println(F("\n\nDisconnecting"));
+  //cc3000.disconnect();
   
 }
 
+void prettyPrintControl(byte *control){
+  Serial.print(F("Speed Setting: "));
+  Serial.println(control[0]);
+  Serial.print(F("Turn Setting: "));
+  Serial.println(control[1]==0 ? F("Left") : control[1]==1 ? F("Right") : F("Center"));
+  Serial.print(F("Direction: "));
+  Serial.println(control[2]==0 ? F("Forward") : F("Backward"));
+}
 
 /**************************************************************************/
 /*!
