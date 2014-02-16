@@ -1,7 +1,7 @@
 #include <Servo.h>
 
 //Pin Variables
-int servoPin = 11;  //Blue signal
+int servoPin = 9;  //Blue signal
 
 int stopVal = 1500;
 int rightVal = 1200;
