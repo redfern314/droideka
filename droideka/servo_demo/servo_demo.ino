@@ -17,6 +17,7 @@ int stopTime = 99999999; //ghetto as shit
 
 void setup(){  
   servo.attach(servoPin);
+  pinMode(solenoidPin, OUTPUT); 
   servo.writeMicroseconds(stopVal);
 }
 
