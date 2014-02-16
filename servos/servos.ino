@@ -7,10 +7,13 @@ int stopVal = 1500;
 int rightVal = 1200;
 int leftVal = 2*stopVal-rightVal;
 
+int motorSpeed = 0; //stopped
+int motorDirection = 0; //forward
+
 Servo servo;
 
-int currentState = 2; //0-left, 1-right, 2-center
-int requestedState = 2;
+int currentState[] = {0,2,0}; //0-left, 1-right, 2-center
+int requestedState[] = {0,2,0};
 
 int stopTime = 99999999; //ghetto as shit
 
@@ -24,24 +27,30 @@ void setup(){
 
 
 void loop(){
-  requestedState = 1;
-  servo.writeMicroseconds(rightVal);
-  // switch(requestedState){
-  //   case 0:
-  //     currentState = left(currentState);
-  //     break;
-  //   case 1:
-  //     currentState = right(currentState);
-  //     break;
-  //   case 2:
-  //     currentState = center(currentState);
-  //     break;
-  // }
+  requestedState = {0,2,0};
 
-  // if(millis() > stopTime)
-  // {
-  //   servo.writeMicroseconds(stopVal);
-  // }
+  motorSpeed = requestedState[0];
+  currentState[0] = motorSpeed;
+
+  motorDirection = requestedState[2];
+  currentState[2] = motorDirection;
+
+  switch(requestedState[1]){
+    case 0:
+      currentState = left(currentState);
+      break;
+    case 1:
+      currentState = right(currentState);
+      break;
+    case 2:
+      currentState = center(currentState);
+      break;
+  }
+
+  if(millis() > stopTime)
+  {
+    servo.writeMicroseconds(stopVal);
+  }
 }
 
 
