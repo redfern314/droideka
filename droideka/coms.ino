@@ -5,9 +5,9 @@
 #include "utility/debug.h"
 
 // WiFi Constants
-#define WLAN_SSID       "MIT"  
-#define WLAN_PASS       "ThisIsDummyText"
-#define WLAN_SECURITY   WLAN_SEC_UNSEC
+#define WLAN_SSID       "OLIN_GUEST"  
+#define WLAN_PASS       "The_Phoenix_Flies"
+#define WLAN_SECURITY   WLAN_SEC_WPA
 
 // These are the interrupt and control pins
 #define ADAFRUIT_CC3000_IRQ   3  // MUST be an interrupt pin!

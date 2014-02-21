@@ -8,22 +8,41 @@
 byte controlData[3];
 unsigned long start;
 
+boolean hardcode; // whether to use the hardcoded values
+
 
 // run once
 void setup() {     
   Serial.begin (115200);
   Serial.println("Start");
 
+  hardcode = true;
+  
+  byte pen_speed = 100; // 0-255
+  byte pen_dir = 0; // 0 or 1
+  byte tilt = 0; // 0-255
+
+
   setupActuators();
-  setupWifi();
+
+  if (!hardcode){
+    setupWifi();
+  } else {
+    controlData[0] = pen_speed;
+    controlData[1] = pen_dir;
+    controlData[2] = tilt;
+  }
   
   start = millis();
 
 }
 
 void loop() {
-  getControlData(controlData);
-  prettyPrintControl(controlData);
+  if (!hardcode){
+    getControlData(controlData);
+    prettyPrintControl(controlData);
+  }
+  
   setMotorMode(controlData[2]);
   setMotorSpeed(controlData[0]);
   setTiltServoState(controlData[1]);
