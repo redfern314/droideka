@@ -1,9 +1,12 @@
 #include "Servo.h"
 
+#define laser               2
 #define motorAm1            7
 #define motorAm2            8
 #define motorPWM            6
 #define tiltServoPin        9
+#define frontServoPin       10
+#define backServoPin        11
 #define rotaryPin1          _BV(PC0) //A0
 #define rotaryPin2          _BV(PC1) //A1
 #define rotaryPort          PINC
@@ -23,6 +26,8 @@
 #define DOWN                1
 
 Servo tiltServo;
+Servo frontServos;
+Servo backServo;
 
 // note: forward and backward might be switched
 void setMotorMode(int mode) {
@@ -54,10 +59,32 @@ void setTiltServoState(int tiltState) {
 
 
 void setupActuators(){
-  
+  pinMode(laser, OUTPUT);
   pinMode(motorAm1, OUTPUT);
   pinMode(motorAm2, OUTPUT);
   pinMode(motorPWM, OUTPUT);
+  pinMode(frontServoPin, OUTPUT);
+  pinMode(backServoPin, OUTPUT);
   tiltServo.attach(tiltServoPin);
+  frontServos.attach(frontServoPin);
+  backServo.attach(backServoPin);
+  
+}
 
+void setLaserState(byte on){
+  if (on){
+    digitalWrite(laser, HIGH);
+  } else {
+    digitalWrite(laser, LOW);
+  }
+}
+
+void setStandingState(byte standing){
+  if (standing){
+    frontServos.write(180);
+    backServo.write(180);
+  } else {
+    frontServos.write(0);
+    backServo.write(0);
+  }  
 }

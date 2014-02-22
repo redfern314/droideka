@@ -5,7 +5,7 @@
  */
 
 
-byte controlData[3];
+byte controlData[5];
 unsigned long start;
 
 boolean hardcode; // whether to use the hardcoded values
@@ -19,23 +19,28 @@ void setup() {
 
   hardcode = false;
   
-  byte pen_speed = 0; // 0-255
-  byte pen_dir = 0; // 0 or 1
-  byte tilt = 0; // 0-255
 
   setupActuators();
 
   if (!hardcode){
     setupComs();
   } else {
+    byte pen_speed = 0; // 0-255
+    byte pen_dir = 0; // 0 or 1
+    byte tilt = 0; // 0-255
+    byte laser = 0; // 0 is off, non-zero is on.
+    byte standing = 0;
     controlData[0] = pen_speed;
     controlData[1] = pen_dir;
     controlData[2] = tilt;
-    setMotorMode(controlData[2]);
+    controlData[3] = laser;
+    controlData[4] = standing;
     setMotorSpeed(controlData[0]);
     setTiltServoState(controlData[1]);
+    setMotorMode(controlData[2]);
+    setLaserState(controlData[3]);
+    setStandingState(controlData[4]);
   }
-  
   start = millis();
 
 }
@@ -44,13 +49,15 @@ void loop() {
   if (!hardcode){
     if (getControlData(controlData)){
       prettyPrintControl(controlData);
-      setMotorMode(controlData[2]);
       setMotorSpeed(controlData[0]);
       setTiltServoState(controlData[1]);
+      setMotorMode(controlData[2]);
+      setLaserState(controlData[3]);
+      setStandingState(controlData[4]);
     }
   }
   
   //Serial.print(F("Time since start:"));
   //Serial.println(millis()-start);
-  delay(50);
+  delay(10);
 }
