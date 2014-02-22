@@ -25,9 +25,13 @@
 #define UP                  0
 #define DOWN                1
 
+#define speedReduction      1
+
 Servo tiltServo;
 Servo frontServos;
 Servo backServo;
+byte state[5];
+
 
 // note: forward and backward might be switched
 void setMotorMode(int mode) {
@@ -44,17 +48,17 @@ void setMotorMode(int mode) {
 }
 
 void setMotorSpeed(int speed) {
-    analogWrite(motorPWM,speed);
+  analogWrite(motorPWM,speed * speedReduction);
 }
 
 void setTiltServoState(int tiltState) {
   if (tiltState==LEFT) {
-        tiltServo.write(0);
-    } else if (tiltState==RIGHT) {
-        tiltServo.write(180);
-    } else if (tiltState==CENTER) {
-        tiltServo.write(90);
-    }
+    tiltServo.write(0);
+  } else if (tiltState==RIGHT) {
+    tiltServo.write(180);
+  } else { //center
+    tiltServo.write(90);
+  }
 }
 
 
@@ -68,23 +72,29 @@ void setupActuators(){
   tiltServo.attach(tiltServoPin);
   frontServos.attach(frontServoPin);
   backServo.attach(backServoPin);
-  
+  setMotorMode(2);
+  setMotorSpeed(0);
+  setTiltServoState(2);
+  setLaserState(0);//laser off
+  setStandingState(0);//start rolling
 }
 
 void setLaserState(byte on){
   if (on){
     digitalWrite(laser, HIGH);
+    state[3] = 1;
   } else {
     digitalWrite(laser, LOW);
+    state[3] = 0;
   }
 }
 
 void setStandingState(byte standing){
   if (standing){
-    frontServos.write(180);
-    backServo.write(180);
+    frontServos.write(45);
+    backServo.write(125);
   } else {
-    frontServos.write(0);
-    backServo.write(0);
+    frontServos.write(125);
+    backServo.write(45);
   }  
 }

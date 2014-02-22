@@ -6,7 +6,7 @@
 
 
 byte controlData[5];
-unsigned long start;
+unsigned long last;
 
 boolean hardcode; // whether to use the hardcoded values
 
@@ -41,7 +41,7 @@ void setup() {
     setLaserState(controlData[3]);
     setStandingState(controlData[4]);
   }
-  start = millis();
+  //last = millis();
 
 }
 
@@ -57,7 +57,8 @@ void loop() {
     }
   }
   
-  //Serial.print(F("Time since start:"));
-  //Serial.println(millis()-start);
-  delay(10);
+  //Serial.print(F("Cycle Time: "));
+  //Serial.println(millis()-last);
+  //last = millis();
+  delay(1);
 }
