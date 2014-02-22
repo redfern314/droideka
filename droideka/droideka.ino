@@ -12,8 +12,9 @@ boolean hardcode; // whether to use the hardcoded values
 
 
 // run once
-void setup() {     
-  Serial.begin (115200);
+void setup() {
+   
+  Serial.begin(9600);
   Serial.println("Start");
 
   hardcode = true;
@@ -22,11 +23,10 @@ void setup() {
   byte pen_dir = 0; // 0 or 1
   byte tilt = 0; // 0-255
 
-
   setupActuators();
 
   if (!hardcode){
-    setupWifi();
+    setupComs();
   } else {
     controlData[0] = pen_speed;
     controlData[1] = pen_dir;
