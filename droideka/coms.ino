@@ -7,13 +7,13 @@ SoftwareSerial blueSerial(10, 11); // RX, TX
 //control[1] = 0,left; 1,right; 2,center
 //control[2] = 0,forward; 1,backward
 void getControlData(byte *control){
-  if(blueSerial.available() >= 3){
-    control[0] = Serial.read();
-    control[1] = Serial.read();
-    control[2] = Serial.read();
-  }
   while(blueSerial.available()){
-    blueSerial.read();
+    delay(1);
+    if (blueSerial.read() == 'q' && blueSerial.available() >=3){
+      control[0] = blueSerial.read();
+      control[1] = blueSerial.read();
+      control[2] = blueSerial.read();
+    }
   }
 }
 
