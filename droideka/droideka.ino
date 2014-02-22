@@ -17,9 +17,9 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Start");
 
-  hardcode = true;
+  hardcode = false;
   
-  byte pen_speed = 100; // 0-255
+  byte pen_speed = 0; // 0-255
   byte pen_dir = 0; // 0 or 1
   byte tilt = 0; // 0-255
 
@@ -31,6 +31,9 @@ void setup() {
     controlData[0] = pen_speed;
     controlData[1] = pen_dir;
     controlData[2] = tilt;
+    setMotorMode(controlData[2]);
+    setMotorSpeed(controlData[0]);
+    setTiltServoState(controlData[1]);
   }
   
   start = millis();
@@ -39,15 +42,15 @@ void setup() {
 
 void loop() {
   if (!hardcode){
-    getControlData(controlData);
-    prettyPrintControl(controlData);
+    if (getControlData(controlData)){
+      prettyPrintControl(controlData);
+      setMotorMode(controlData[2]);
+      setMotorSpeed(controlData[0]);
+      setTiltServoState(controlData[1]);
+    }
   }
   
-  setMotorMode(controlData[2]);
-  setMotorSpeed(controlData[0]);
-  setTiltServoState(controlData[1]);
-  
-  Serial.print(F("Time since start:"));
-  Serial.println(millis()-start);
-  delay(100);
+  //Serial.print(F("Time since start:"));
+  //Serial.println(millis()-start);
+  delay(50);
 }

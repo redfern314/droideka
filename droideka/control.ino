@@ -29,15 +29,12 @@ void setMotorMode(int mode) {
     if (mode==FORWARD) {
         digitalWrite(motorAm1,HIGH);
         digitalWrite(motorAm2,LOW);
-        Serial.println("frwrd");
     } else if (mode==BACKWARD) {
         digitalWrite(motorAm1,LOW);
         digitalWrite(motorAm2,HIGH);
-        Serial.println("bkwrd");
     } else if (mode==STOP) {
         digitalWrite(motorAm1,LOW);
         digitalWrite(motorAm2,LOW);
-        Serial.println("stop");
     }
 }
 
