@@ -38,26 +38,33 @@ void setMotorMode(int mode) {
     if (mode==FORWARD) {
         digitalWrite(motorAm1,HIGH);
         digitalWrite(motorAm2,LOW);
+	state[1] = 0;
     } else if (mode==BACKWARD) {
         digitalWrite(motorAm1,LOW);
         digitalWrite(motorAm2,HIGH);
+	state[1] = 1;
     } else if (mode==STOP) {
         digitalWrite(motorAm1,LOW);
         digitalWrite(motorAm2,LOW);
+	state[1] = 2;
     }
 }
 
 void setMotorSpeed(int speed) {
   analogWrite(motorPWM,speed * speedReduction);
+  state[0] = speed;
 }
 
 void setTiltServoState(int tiltState) {
   if (tiltState==LEFT) {
     tiltServo.write(0);
+    state[2] = 0;
   } else if (tiltState==RIGHT) {
     tiltServo.write(180);
+    state[2] = 1;
   } else { //center
     tiltServo.write(90);
+    state[2] = 2;
   }
 }
 
@@ -90,11 +97,13 @@ void setLaserState(byte on){
 }
 
 void setStandingState(byte standing){
-  if (standing){
+  if (standing && !state[4]){
     frontServos.write(45);
     backServo.write(125);
-  } else {
+    state[4] = 1;
+  } else if (!standing && state[4]){
     frontServos.write(125);
     backServo.write(45);
+    state[4] = 0;
   }  
 }
